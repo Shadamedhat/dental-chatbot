@@ -1,0 +1,32 @@
+from prophet import Prophet
+from prophet.plot import plot_plotly
+import plotly.graph_objs as go
+
+# نفلتر الحالات المكتملة
+completed_cases = df[df['SimplifiedStatus'] == 'Completed']
+
+
+# نتأكد إن التاريخ بصيغة datetime
+completed_cases['Date'] = pd.to_datetime(completed_cases['Date'], errors='coerce')
+
+# نشيل القيم الفاضية في التاريخ
+completed_cases = completed_cases.dropna(subset=['Date'])
+
+# نفلتر حسب التخصص المختار
+completed_specialty = completed_cases[completed_cases['Case_Type'] == selected_specialty]
+
+# نحسب عدد الحالات لكل شهر
+monthly_counts = completed_specialty.resample('M', on='Date').size().reset_index()
+monthly_counts.columns = ['ds', 'y']
+
+# نموذج Prophet
+model = Prophet()
+model.fit(monthly_counts)
+
+# المستقبل: 6 شهور
+future = model.make_future_dataframe(periods=6, freq='M')
+forecast = model.predict(future)
+
+# رسم التوقعات
+fig3 = plot_plotly(model, forecast)
+st.plotly_chart(fig3)
