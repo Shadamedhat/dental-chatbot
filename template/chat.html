@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dental Chatbot</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input, button { padding: 10px; margin: 10px 0; width: 100%; }
+        #answer { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Ask the Dental Chatbot</h2>
+    <input type="text" id="question" placeholder="Type your question here...">
+    <button onclick="ask()">Send</button>
+    <div id="answer"></div>
+
+    <script>
+        function ask() {
+            const q = document.getElementById("question").value;
+            fetch("/ask", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({question: q})
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("answer").innerText = "Answer: " + data.answer;
+            })
+            .catch(() => {
+                document.getElementById("answer").innerText = "Error fetching answer.";
+            });
+        }
+    </script>
+</body>
+</html>
