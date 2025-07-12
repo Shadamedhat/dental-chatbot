@@ -78,4 +78,5 @@ jobs:
         with:
           app-name: 'dental'
           slot-name: 'Production'
+          clean: true
           
